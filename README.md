@@ -1,2 +1,2 @@
-# java-python-example
-Upload java and python assignments
+# Python codes developed by Arnab
+Upload all python projects 
