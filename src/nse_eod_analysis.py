@@ -1,21 +1,31 @@
 import numpy as np
 import pandas as pd
 import os
-
-# set date
 import datetime
 
-# date_time_obj=datetime.date.today()
-# date_time_obj= datetime.date.today()- datetime.timedelta(days=1)
+# set date
+date_time_obj = datetime.date.today ()
 
-date_str = '21-08-2020'
+date_str = '27-08-2020'
 date_time_obj = datetime.datetime.strptime ( date_str, '%d-%m-%Y' )
 
 str_date = date_time_obj.strftime ( "%d%m%y" )
 
+# get yesterday
+wkday = date_time_obj.weekday ()
+if wkday == 0:
+    yesterday = date_time_obj - datetime.timedelta ( days=3 )
+elif wkday == 6:
+    yesterday = date_time_obj - datetime.timedelta ( days=2 )
+else:
+    yesterday = date_time_obj - datetime.timedelta ( days=1 )
+
+str_ydate = yesterday.strftime ( "%d%m%y" )
+
 file_path = "/Users/arnab/Documents/data/NSE_Data/"
 
 op_file_dir = os.path.join ( file_path, 'output/', str_date )
+y_op_file_dir = os.path.join ( file_path, 'output/', str_ydate )
 
 if os.path.isdir ( op_file_dir ):
     pass
@@ -112,6 +122,12 @@ top10_combo.to_csv ( op_file_dir + "/" + 'Top_Stock_Combo-' + str_date + '.csv' 
 
 # read corporate action file - Dividend list
 corp_df = pd.read_csv ( file_path + "PR" + str_date + "/" + "Bc" + str_date + ".csv" )
-corp_clean = corp_df[ (corp_df[ "SERIES" ] == 'EQ') & (corp_df[ "PURPOSE" ].str.contains ( 'DIV' )) ]
+corp_clean = corp_df[ (corp_df[ "SERIES" ] == 'EQ') & (corp_df[ "PURPOSE" ].str.contains ( 'DIV' )) ].sort_values (
+    "SYMBOL" )
 corp_clean.to_csv ( op_file_dir + "/" + 'Dividend-' + str_date + '.csv' )
 
+my_choice[ "SYMBOL" ].to_csv ( op_file_dir + "/Positive_Symbol.csv", header=None, index=None )
+
+my_prev_choice = pd.read_csv ( y_op_file_dir + "/Increasing.csv", names=[ "SYMBOL" ] )
+const_gain = pd.merge ( my_choice[ "SYMBOL" ], my_prev_choice[ "SYMBOL" ], how='inner' )
+const_gain.to_csv ( op_file_dir + "/" + 'Increasing.csv' )
