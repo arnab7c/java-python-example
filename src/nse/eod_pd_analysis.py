@@ -56,7 +56,7 @@ class DataOperation:
         yesterday_dir=os.path.join ( self.file_path, 'output/', self.yesterday )
         return yesterday_dir
 
-    def cleanDataFile(self):
+    def cleanPDDataFile(self):
         # read initial downloaded csv data
         init_df = pd.read_csv ( self.file_path + "PR" + self.today + "/" + "Pd" + self.today + ".csv" )
 
@@ -99,18 +99,18 @@ curr_dt= dt_obj.setToday()
 y_dt = dt_obj.setYesterDay ()
 
 do = DataOperation(curr_dt,y_dt)
-clean_df=do.cleanDataFile()
+clean_pd_df=do.cleanPDDataFile()
 
 # filter EQ which ended in +ve, copy slice in new dataframe
-my_choice = clean_df[ (clean_df[ "CLOSE_PRICE" ] > clean_df[ "OPEN_PRICE" ]) ].copy ()
+my_choice = clean_pd_df[ (clean_pd_df[ "CLOSE_PRICE" ] > clean_pd_df[ "OPEN_PRICE" ]) ].copy ()
 # Condition - number of trade instruction > 10,000
-my_choice_trades = clean_df[
-    (clean_df[ "TRADES" ] > 10000) & (clean_df[ "CLOSE_PRICE" ] > clean_df[ "OPEN_PRICE" ]) ].copy ()
+my_choice_trades = clean_pd_df[
+    (clean_pd_df[ "TRADES" ] > 10000) & (clean_pd_df[ "CLOSE_PRICE" ] > clean_pd_df[ "OPEN_PRICE" ]) ].copy ()
 # Condition - number of trade quantity > 500,000
-my_choice_trdqty = clean_df[
-    (clean_df[ "NET_TRDQTY" ] > 500000) & (clean_df[ "CLOSE_PRICE" ] > clean_df[ "OPEN_PRICE" ]) ].copy ()
+my_choice_trdqty = clean_pd_df[
+    (clean_pd_df[ "NET_TRDQTY" ] > 500000) & (clean_pd_df[ "CLOSE_PRICE" ] > clean_pd_df[ "OPEN_PRICE" ]) ].copy ()
 # Condition - number of trade value > 100,000,000
-my_choice_trdval = clean_df[
-    (clean_df[ "NET_TRDVAL" ] > 100000000) & (clean_df[ "CLOSE_PRICE" ] > clean_df[ "OPEN_PRICE" ]) ].copy ()
+my_choice_trdval = clean_pd_df[
+    (clean_pd_df[ "NET_TRDVAL" ] > 100000000) & (clean_pd_df[ "CLOSE_PRICE" ] > clean_pd_df[ "OPEN_PRICE" ]) ].copy ()
 
 do.setTopStocks(my_choice,"ALL")
